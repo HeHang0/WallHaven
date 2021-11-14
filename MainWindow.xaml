@@ -1,0 +1,66 @@
+﻿<Window x:Class="WallHaven.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WallHaven" 
+        mc:Ignorable="d" Background="Transparent"
+        WindowStartupLocation="CenterScreen" Closed="Window_Closed" HorizontalContentAlignment="Center"
+        Title="WallHaven" Height="450" Width="800" Loaded="Window_Loaded">
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            CaptionHeight="20"
+            ResizeBorderThickness="8"
+            CornerRadius="8"
+            GlassFrameThickness="-1"
+            UseAeroCaptionButtons="True" />
+    </WindowChrome.WindowChrome>
+    <Grid x:Name="ImageBackgroud" Background="Transparent" MouseWheel="ImageBackgroud_MouseWheel" Cursor="Hand">
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Name="MenuLast" Header="Last" IsEnabled="False" Click="MenuLast_Click"/>
+                <MenuItem Name="MenuNext" Header="Next" IsEnabled="False" Click="MenuNext_Click"/>
+                <MenuItem Name="MenuRefresh" Header="Refresh" Click="MenuRefresh_Click"/>
+                <Separator></Separator>
+                <MenuItem Name="MenuSaveAs" Header="SaveAs" IsEnabled="False" Click="MenuSaveAs_Click"/>
+                <MenuItem Name="MenuWallpaper" Header="Wallpaper" IsEnabled="False" Click="MenuWallpaper_Click">
+                    <MenuItem Name="MenuWallpaperFill" Header="Fill" Tag="1"/>
+                    <MenuItem Name="MenuWallpaperStretch" Header="Stretch" Tag="2"/>
+                    <MenuItem Name="MenuWallpaperTile" Header="Tile" Tag="3"/>
+                    <MenuItem Name="MenuWallpaperCenter" Header="Center" Tag="4"/>
+                    <MenuItem Name="MenuWallpaperFit" Header="Fit" Tag="5"/>
+                </MenuItem>
+                <Separator></Separator>
+                <MenuItem Name="MenuInclude" Header="Include">
+                    <MenuItem Name="MenuGeneral" IsCheckable="True" IsChecked="True" Header="General"/>
+                    <MenuItem Name="MenuAnime"  IsCheckable="True" IsChecked="True" Header="Anime"/>
+                    <MenuItem Name="MenuPeople"  IsCheckable="True" IsChecked="True" Header="People"/>
+                    <Separator></Separator>
+                    <MenuItem Name="MenuSFW" IsCheckable="True" IsChecked="True" Header="SFW"/>
+                    <MenuItem Name="MenuSketchy" IsCheckable="True" IsChecked="True" Header="Sketchy"/>
+                    <MenuItem Name="MenuNSFW" IsCheckable="True" IsChecked="True" Header="NSFW"/>
+                </MenuItem>
+                <MenuItem Name="MenuSorting" Header="Sorting"  Click="MenuSorting_Click">
+                    <MenuItem Name="MenuDateAdded" IsCheckable="True" IsChecked="False" Header="DateAdded" Tag="1"/>
+                    <MenuItem Name="MenuRelevance"  IsCheckable="True" IsChecked="False" Header="Relevance" Tag="2"/>
+                    <MenuItem Name="MenuRandom"  IsCheckable="True" IsChecked="False" Header="Random" Tag="3"/>
+                    <MenuItem Name="MenuViews" IsCheckable="True" IsChecked="False" Header="Views" Tag="4"/>
+                    <MenuItem Name="MenuFavourites" IsCheckable="True" IsChecked="False" Header="Favourites" Tag="5"/>
+                    <MenuItem Name="MenuToplist" IsCheckable="True" IsChecked="False" Header="Toplist" Tag="6"/>
+                </MenuItem>
+            </ContextMenu>
+        </Grid.ContextMenu>
+        <Image x:Name="ImageDisplay" MouseLeftButtonDown="ImageDisplay_MouseLeftButtonDown"  MouseMove="ImageDisplay_MouseMove"
+                   MouseLeftButtonUp="ImageDisplay_MouseLeftButtonUp"/>
+        <Label x:Name="TipsPos" Height="30" Content="哈哈哈" Foreground="DeepPink"  VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+        <!--<Border x:Name="ImageBackgroud" Background="Black" MouseWheel="ImageBackgroud_MouseWheel"  MouseMove="ImageBackgroud_MouseMove"  MouseUp="ImageBackgroud_MouseUp">
+            <Image x:Name="ImageDisplay" Source="{Binding}">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform CenterX="0" CenterY="0" x:Name="ImageScaleTransform"></ScaleTransform>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+        </Border>-->
+    </Grid>
+</Window>
