@@ -10,12 +10,20 @@
     <Border CornerRadius="8" Background="#FAFAFA" BorderThickness="1" BorderBrush="#C8C8C8">
         <Grid>
             <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" Height="50" PreviewMouseLeftButtonDown="DragWindow" Cursor="SizeAll">
-            <InlineUIContainer>
-                <TextBlock Name="WindowTitle" TextWrapping="Wrap" Text="" Margin="21,15" Cursor="SizeAll" Foreground="#FF666666" FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="SemiBold"/>                
-            </InlineUIContainer>
-        </TextBlock>
+                <InlineUIContainer>
+                    <TextBlock Name="WindowTitle" TextWrapping="Wrap" Text="" Margin="21,15" Cursor="SizeAll" Foreground="#FF666666" FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="SemiBold"/>                
+                </InlineUIContainer>
+            </TextBlock>
+            <Button Click="CloseButton_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="Hand" FontSize="20" Height="25" VerticalContentAlignment="Top"
+                    Content="×" Foreground="Black"  Background="Transparent" BorderBrush="Transparent" Width="20" Margin="0,-5,10,0">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="8"></Setter>
+                    </Style>
+                </Button.Resources>
+            </Button>
             <Canvas Height="55" VerticalAlignment="Bottom">
-                <Button x:Name="CancelButton" Click="ExitButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="40" Canvas.Top="10" Cursor="Hand"
+                <Button x:Name="CancelButton" Click="CancelButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="40" Canvas.Top="10" Cursor="Hand"
                     Content="取 消" Foreground="White" Width="91" Background="#0C73C2" BorderBrush="#FFE1E1E2" Height="35">
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">

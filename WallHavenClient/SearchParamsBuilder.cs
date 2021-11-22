@@ -30,9 +30,17 @@ namespace WallHaven.WallHavenClient
         _1y = 7
     }
 
+    public static class Ratio
+    {
+        public static string Wide = "16x9,16x10";
+        public static string UltraWide = "21x9,32x10,48x10";
+        public static string Portrait = "9x16,10x16,9x18";
+        public static string Square = "1x1,3x2,4x3,5x4";
+    }
+
     public class SearchParamsBuilder
     {
-        private string _apiKey;
+        private string _apiKey = string.Empty;
         private bool _searchGeneral;
         private bool _searchAnime;
         private bool _searchPeople;
@@ -49,67 +57,49 @@ namespace WallHaven.WallHavenClient
 
         public string Build()
         {
-            StringBuilder builder = new StringBuilder();
+            List<string> builder = new List<string>();
 
             if (!string.IsNullOrEmpty(_apiKey))
             {
-                builder.Append($"&apikey={_apiKey}");
+                builder.Add($"apikey={_apiKey}");
             }
 
             string categories = string.Empty;
             categories += _searchGeneral ? "1" : "0";
             categories += _searchAnime ? "1" : "0";
             categories += _searchPeople ? "1" : "0";
-            builder.Append($"&categories={categories}");
+            builder.Add($"categories={categories}");
 
             string purity = string.Empty;
             purity += _searchSFW ? "1" : "0";
             purity += _searchSketchy ? "1" : "0";
             purity += _searchNSFW ? "1" : "0";
-            builder.Append($"&purity={purity}");
+            builder.Add($"purity={purity}");
 
-            builder.Append($"&sorting={_sorting}");
-            builder.Append($"&order={_orderBy}");
+            builder.Add($"sorting={_sorting}");
+            builder.Add($"order={_orderBy}");
 
             if (_sorting is Sorting.toplist)
             {
-                builder.Append($"&topRange={_topRange.ToString().Replace("_", "")}");
+                builder.Add($"topRange={_topRange.ToString().Replace("_", "")}");
             }
 
             if (_minHeight != 0 && _minWidth != 0)
             {
-                builder.Append($"&atleast={_minWidth}x{_minHeight}");
+                builder.Add($"atleast={_minWidth}x{_minHeight}");
             }
 
             if (_resolutions.Count > 0)
             {
-                StringBuilder resolutionBuilder = new StringBuilder();
-                foreach (var resolution in _resolutions)
-                {
-                    resolutionBuilder.Append($",{resolution}");
-                }
-
-                var finalResolutionString = resolutionBuilder.ToString();
-                finalResolutionString.Remove(0, 1);
-                builder.Append(finalResolutionString);
+                builder.Add($"resolutions={string.Join(",", _resolutions)}");
             }
 
             if (_ratios.Count > 0)
             {
-                StringBuilder ratioBuilder = new StringBuilder();
-                foreach (var ratio in _ratios)
-                {
-                    ratioBuilder.Append($",{ratio}");
-                }
-
-                var finalRatioString = ratioBuilder.ToString();
-                finalRatioString.Remove(0, 1);
-                builder.Append(finalRatioString);
+                builder.Add($"ratios={string.Join(",", _ratios)}");
             }
-
-            var finalQueryString = builder.ToString();
-            finalQueryString = finalQueryString.Remove(0, 1); // Remove first &
-            finalQueryString = finalQueryString.Insert(0, "?");
+            
+            var finalQueryString = "?"+string.Join("&", builder); ;
             return finalQueryString;
         }
 

@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace WallHaven.WallHavenClient
 {
     public class WallHavenResponse
     {
-        [JsonPropertyName("data")] public List<Data> Data { get; set; } = new List<Data>();
-        [JsonPropertyName("meta")] public Meta Meta { get; set; } = new Meta();
+        [JsonProperty("data")] public List<Data> Data { get; set; } = new List<Data>();
+        [JsonProperty("meta")] public Meta Meta { get; set; } = new Meta();
     }
 
     public class Meta
     {
-        [JsonPropertyName("current_page")] public int CurrentPage { get; set; }
+        [JsonProperty("current_page")] public int CurrentPage { get; set; }
 
-        [JsonPropertyName("last_page")] public int LastPage { get; set; }
+        [JsonProperty("last_page")] public int LastPage { get; set; }
 
-        [JsonPropertyName("per_page")] public string PerPageStr { get; set; } = string.Empty;
+        [JsonProperty("per_page")] public string PerPageStr { get; set; } = string.Empty;
 
         public int PerPage
         {
@@ -26,99 +26,109 @@ namespace WallHaven.WallHavenClient
             }
         }
 
-        [JsonPropertyName("total")] public int Total { get; set; }
+        [JsonProperty("total")] public int Total { get; set; }
 
-        [JsonPropertyName("query")] public object Query { get; set; } = new object();
+        [JsonProperty("query")] public object Query { get; set; } = new object();
 
-        [JsonPropertyName("seed")] public object Seed { get; set; } = new object();
+        [JsonProperty("seed")] public object Seed { get; set; } = new object();
     }
 
     public class Avatar
     {
-        [JsonPropertyName("200px")] public string PX200 { get; set; } = string.Empty;
+        [JsonProperty("200px")] public string PX200 { get; set; } = string.Empty;
 
-        [JsonPropertyName("128px")] public string PX128 { get; set; } = string.Empty;
+        [JsonProperty("128px")] public string PX128 { get; set; } = string.Empty;
 
-        [JsonPropertyName("32px")] public string PX32 { get; set; } = string.Empty;
+        [JsonProperty("32px")] public string PX32 { get; set; } = string.Empty;
 
-        [JsonPropertyName("20px")] public string PX20 { get; set; } = string.Empty;
+        [JsonProperty("20px")] public string PX20 { get; set; } = string.Empty;
     }
 
     public class Uploader
     {
-        [JsonPropertyName("username")] public string Username { get; set; } = string.Empty;
+        [JsonProperty("username")] public string Username { get; set; } = string.Empty;
 
-        [JsonPropertyName("group")] public string Group { get; set; } = string.Empty;
+        [JsonProperty("group")] public string Group { get; set; } = string.Empty;
 
-        [JsonPropertyName("avatar")] public Avatar Avatar { get; set; } = new Avatar();
+        [JsonProperty("avatar")] public Avatar Avatar { get; set; } = new Avatar();
     }
 
     public class Thumbs
     {
-        [JsonPropertyName("large")] public string Large { get; set; } = string.Empty;
+        [JsonProperty("large")] public string Large { get; set; } = string.Empty;
 
-        [JsonPropertyName("original")] public string Original { get; set; } = string.Empty;
+        [JsonProperty("original")] public string Original { get; set; } = string.Empty;
 
-        [JsonPropertyName("small")] public string Small { get; set; } = string.Empty;
+        [JsonProperty("small")] public string Small { get; set; } = string.Empty;
     }
 
     public class Tag
     {
-        [JsonPropertyName("id")] public int Id { get; set; }
+        [JsonProperty("id")] public int Id { get; set; }
 
-        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonProperty("name")] public string Name { get; set; } = string.Empty;
 
-        [JsonPropertyName("alias")] public string Alias { get; set; } = string.Empty;
+        [JsonProperty("alias")] public string Alias { get; set; } = string.Empty;
 
-        [JsonPropertyName("category_id")] public int CategoryId { get; set; }
+        [JsonProperty("category_id")] public int CategoryId { get; set; }
 
-        [JsonPropertyName("category")] public string Category { get; set; } = string.Empty;
+        [JsonProperty("category")] public string Category { get; set; } = string.Empty;
 
-        [JsonPropertyName("purity")] public string Purity { get; set; } = string.Empty;
+        [JsonProperty("purity")] public string Purity { get; set; } = string.Empty;
 
-        [JsonPropertyName("created_at")] public string CreatedAt { get; set; } = string.Empty;
+        [JsonProperty("created_at")] public string CreatedAt { get; set; } = string.Empty;
     }
 
     public class Data
     {
-        [JsonPropertyName("id")] public string Id { get; set; } = string.Empty;
+        [JsonProperty("id")] public string Id { get; set; } = string.Empty;
 
-        [JsonPropertyName("url")] public string Url { get; set; } = string.Empty;
+        [JsonProperty("url")] public string Url { get; set; } = string.Empty;
 
-        [JsonPropertyName("short_url")] public string ShortUrl { get; set; } = string.Empty;
+        [JsonProperty("short_url")] public string ShortUrl { get; set; } = string.Empty;
 
-        [JsonPropertyName("uploader")] public Uploader Uploader { get; set; } = new Uploader();
+        [JsonProperty("uploader")] public Uploader Uploader { get; set; } = new Uploader();
 
-        [JsonPropertyName("views")] public int Views { get; set; }
+        [JsonProperty("views")] public int Views { get; set; }
 
-        [JsonPropertyName("favorites")] public int Favorites { get; set; }
+        [JsonProperty("favorites")] public int Favorites { get; set; }
 
-        [JsonPropertyName("source")] public string Source { get; set; } = string.Empty;
+        [JsonProperty("source")] public string Source { get; set; } = string.Empty;
 
-        [JsonPropertyName("purity")] public string Purity { get; set; } = string.Empty;
+        [JsonProperty("purity")] public string Purity { get; set; } = string.Empty;
 
-        [JsonPropertyName("category")] public string Category { get; set; } = string.Empty;
+        [JsonProperty("category")] public string Category { get; set; } = string.Empty;
 
-        [JsonPropertyName("dimension_x")] public int DimensionX { get; set; }
+        [JsonProperty("dimension_x")] public int DimensionX { get; set; }
 
-        [JsonPropertyName("dimension_y")] public int DimensionY { get; set; }
+        [JsonProperty("dimension_y")] public int DimensionY { get; set; }
 
-        [JsonPropertyName("resolution")] public string Resolution { get; set; } = string.Empty;
+        [JsonProperty("resolution")] public string Resolution { get; set; } = string.Empty;
 
-        [JsonPropertyName("ratio")] public string Ratio { get; set; } = string.Empty;
+        [JsonProperty("ratio")] public string Ratio { get; set; } = string.Empty;
 
-        [JsonPropertyName("file_size")] public int FileSize { get; set; }
+        [JsonProperty("file_size")] public int FileSize { get; set; }
 
-        [JsonPropertyName("file_type")] public string FileType { get; set; } = string.Empty;
+        [JsonProperty("file_type")] public string FileType { get; set; } = string.Empty;
 
-        [JsonPropertyName("created_at")] public string CreatedAt { get; set; } = string.Empty;
+        [JsonProperty("created_at")] public string CreatedAt { get; set; } = string.Empty;
 
-        [JsonPropertyName("colors")] public List<string> Colors { get; set; } = new List<string>();
+        [JsonProperty("colors")] public List<string> Colors { get; set; } = new List<string>();
 
-        [JsonPropertyName("path")] public string Path { get; set; } = string.Empty;
+        [JsonProperty("path")] public string Path { get; set; } = string.Empty;
 
-        [JsonPropertyName("thumbs")] public Thumbs Thumbs { get; set; } = new Thumbs();
+        [JsonProperty("thumbs")] public Thumbs Thumbs { get; set; } = new Thumbs();
+        public string ThumbsUrl
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(Thumbs.Small)) return Thumbs.Small;
+                if (!string.IsNullOrWhiteSpace(Thumbs.Original)) return Thumbs.Original;
+                if (!string.IsNullOrWhiteSpace(Thumbs.Large)) return Thumbs.Large;
+                return Path;
+            }
+        }
 
-        [JsonPropertyName("tags")] public List<Tag> Tags { get; set; } = new List<Tag>();
+        [JsonProperty("tags")] public List<Tag> Tags { get; set; } = new List<Tag>();
     }
 }

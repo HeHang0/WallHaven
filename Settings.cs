@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using WallHaven.WallHavenClient;
 
@@ -28,7 +28,14 @@ namespace WallHaven
 
         public static void SaveSetting(Settings setting)
         {
-            File.WriteAllText(AppSettingPath, JsonSerializer.Serialize(setting));
+            try
+            {
+                File.WriteAllText(AppSettingPath, JsonConvert.SerializeObject(setting));
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.ToString());
+            }
         }
 
         public static Settings ReadSetting()
@@ -39,7 +46,7 @@ namespace WallHaven
                 try
                 {
                     string text = File.ReadAllText(AppSettingPath);
-                    Settings result = JsonSerializer.Deserialize<Settings>(text);
+                    Settings? result = JsonConvert.DeserializeObject<Settings>(text);
                     if (result != null) settings = result;
                 }
                 catch (Exception)
@@ -57,6 +64,10 @@ namespace WallHaven
         public bool SFW { get; set; } = true;
         public bool Sketchy { get; set; } = true;
         public bool NSFW { get; set; } = true;
+        public bool Wide { get; set; } = true;
+        public bool UltraWide { get; set; } = true;
+        public bool Portrait { get; set; } = true;
+        public bool Square { get; set; } = true;
         public double WindowWidth { get; set; }
         public double WindowHeight { get; set; }
         public Sorting Sort { get; set; } = Sorting.random;

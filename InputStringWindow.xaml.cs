@@ -22,7 +22,12 @@ namespace WallHaven
             }
         }
 
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = null;
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
         }

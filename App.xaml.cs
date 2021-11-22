@@ -11,13 +11,14 @@ namespace WallHaven
     /// </summary>
     public partial class App : Application
     {
-        private static Assembly OnResolveAssembly(object sender, ResolveEventArgs args)
+        private static Assembly? OnResolveAssembly(object sender, ResolveEventArgs args)
         {
             Assembly executingAssembly = Assembly.GetExecutingAssembly();
             var executingAssemblyName = executingAssembly.GetName();
             var resName = executingAssemblyName.Name + ".resources";
 
-            AssemblyName assemblyName = new AssemblyName(args.Name); string path = "";
+            AssemblyName assemblyName = new AssemblyName(args.Name); 
+            string path;
             if (resName == assemblyName.Name)
             {
                 path = executingAssemblyName.Name + ".g.resources"; ;
@@ -31,15 +32,13 @@ namespace WallHaven
                 }
             }
 
-            using (Stream stream = executingAssembly.GetManifestResourceStream(path))
-            {
-                if (stream == null)
-                    return null;
+            using Stream stream = executingAssembly.GetManifestResourceStream(path);
+            if (stream == null)
+                return null;
 
-                byte[] assemblyRawBytes = new byte[stream.Length];
-                stream.Read(assemblyRawBytes, 0, assemblyRawBytes.Length);
-                return Assembly.Load(assemblyRawBytes);
-            }
+            byte[] assemblyRawBytes = new byte[stream.Length];
+            stream.Read(assemblyRawBytes, 0, assemblyRawBytes.Length);
+            return Assembly.Load(assemblyRawBytes);
         }
 
         protected override void OnStartup(StartupEventArgs e)

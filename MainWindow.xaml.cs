@@ -1,11 +1,18 @@
 ﻿using Microsoft.Win32;
+using ModernWpf.Controls;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using WallHaven.Theme;
 using WallHaven.WallHavenClient;
 
 namespace WallHaven
@@ -46,34 +53,46 @@ namespace WallHaven
                 Height = setting.WindowHeight;
                 Width = setting.WindowWidth;
             }
-            SetMenuSort(setting.Sort);
+            BackGround.Source = Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.BlueGradients.GetHbitmap(),
+                IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             InitHaven();
         }
 
         private void InitHaven()
         {
-            while (string.IsNullOrWhiteSpace(setting.APIKey))
-            {
-                InputStringWindow inputStringWindow = new InputStringWindow("WallHaven APIKey", "https://wallhaven.cc/settings/account", false);
-                if (inputStringWindow.ShowDialog() == true)
-                {
-                    setting.APIKey = inputStringWindow.InputString;
-                }
-            }
+            //if (string.IsNullOrWhiteSpace(setting.APIKey))
+            //{
+            //    InputStringWindow inputStringWindow = new InputStringWindow("WallHaven APIKey", "https://wallhaven.cc/settings/account", false);
+            //    if (inputStringWindow.ShowDialog() == true)
+            //    {
+            //        setting.APIKey = inputStringWindow.InputString;
+            //    }
+            //}
 
             Config config = new Config()
             {
                 BaseUrl = setting.BaseUrl,
                 APIKey = setting.APIKey
             };
-            wallHaven = new WallHavenRequest(new HttpClient(), config);
+
+            wallHaven = new WallHavenRequest(config);
+            InitMenuCheck();
+            RefreshPicList();
+        }
+
+        private void InitMenuCheck()
+        {
             MenuGeneral.IsChecked = setting.General;
             MenuAnime.IsChecked = setting.Anime;
             MenuPeople.IsChecked = setting.People;
             MenuSFW.IsChecked = setting.SFW;
             MenuSketchy.IsChecked = setting.Sketchy;
             MenuNSFW.IsChecked = setting.NSFW;
-            RefreshPicList();
+            MenuWide.IsChecked = setting.Wide;
+            MenuUltraWide.IsChecked = setting.UltraWide;
+            MenuPortrait.IsChecked = setting.Portrait;
+            MenuSquare.IsChecked = setting.Square;
+            SetMenuSort(setting.Sort);
         }
 
         private async void RefreshPicList()
@@ -81,8 +100,8 @@ namespace WallHaven
             if (wallHaven == null) return;
             ChangeLoading(true);
             MenuRefresh.IsEnabled = false;
-            string _searchParams = new SearchParamsBuilder()
-                  //.WithMinimumResolution(3440, 1440)
+            SearchParamsBuilder _searchParamsBuilder = new SearchParamsBuilder()
+                  .WithRatios(GetRatio())
                   .IncludeGeneral(MenuGeneral.IsChecked)
                   .IncludeAnime(MenuAnime.IsChecked)
                   .IncludePeople(MenuPeople.IsChecked)
@@ -90,19 +109,37 @@ namespace WallHaven
                   .IncludeSketchy(MenuSketchy.IsChecked)
                   .IncludeNSFW(MenuNSFW.IsChecked)
                   .OrderBy(OrderBy.desc)
-                  .SortBy(GetSorting())
-                  .Build();
+                  .SortBy(GetSorting());
+            string _searchParams = _searchParamsBuilder.Build();
             try
             {
-                wallHavenResult = await wallHaven.Search(_searchParams);
+                wallHavenResult = await wallHaven.Search(_searchParams, setting.BaseUrl, setting.APIKey);
                 currentIndex = 0;
-                MenuRefresh.IsEnabled = true;
-                ShowImage();
+                if(wallHavenResult != null)
+                {
+                    ImagesDisplay.ItemsSource = wallHavenResult.Data;
+                    ShowImage();
+                }
+                else
+                {
+                    TipsPos.Content = "加载失败";
+                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 TipsPos.Content = "加载失败";
             }
+            MenuRefresh.IsEnabled = true;
+        }
+
+        private List<string> GetRatio()
+        {
+            List<string> list = new List<string>();
+            if (MenuWide.IsChecked) list.Add(Ratio.Wide);
+            if (MenuUltraWide.IsChecked) list.Add(Ratio.UltraWide);
+            if (MenuPortrait.IsChecked) list.Add(Ratio.Portrait);
+            if (MenuSquare.IsChecked) list.Add(Ratio.Square);
+            return list;
         }
 
         private int currentIndex;
@@ -120,9 +157,33 @@ namespace WallHaven
             ShowImage();
         }
 
+        private void ImagesDisplay_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Image image = (Image)sender;
+            if(wallHavenResult != null && image.Tag is string)
+            {
+                int index = wallHavenResult.Data.FindIndex(o => o.Id == image.Tag.ToString());
+                if (index >= 0)
+                {
+                    currentIndex = index;
+                    ShowImage();
+                    e.Handled = true;
+                }
+            }
+        }
+
         private void MenuRefresh_Click(object sender, RoutedEventArgs e)
         {
             RefreshPicList();
+        }
+
+        private void MenuCopy_Click(object sender, RoutedEventArgs e)
+        {
+            if (ImageDisplay.Source != null && ImageDisplay.Source is BitmapSource source)
+            {
+                BitmapSource bitmapImage = source;
+                Clipboard.SetImage(bitmapImage);
+            }
         }
 
         private void ShowImage()
@@ -141,9 +202,14 @@ namespace WallHaven
 
         private void SetImage(string imageUri)
         {
-            ChangeLoading(true);
             BitmapImage imageBitmap = new BitmapImage(new Uri(imageUri));
-            imageBitmap.DownloadCompleted += ImageBitmap_DownloadCompleted;
+            if(imageBitmap.IsDownloading) {
+                ChangeLoading(true);
+                MenuSaveAs.IsEnabled = false;
+                MenuWallpaper.IsEnabled = false;
+                MenuCopy.IsEnabled = false;
+                imageBitmap.DownloadCompleted += ImageBitmap_DownloadCompleted;
+            }
             ImageDisplay.Source = imageBitmap;
             ImageDisplay.RenderTransform = new MatrixTransform();
         }
@@ -161,6 +227,7 @@ namespace WallHaven
             ((BitmapSource)sender).DownloadCompleted -= ImageBitmap_DownloadCompleted;
             MenuSaveAs.IsEnabled = true;
             MenuWallpaper.IsEnabled = true;
+            MenuCopy.IsEnabled = true;
         }
 
         private void Zoom(double delta, Point position)
@@ -216,15 +283,19 @@ namespace WallHaven
             mouseMoved = true;
         }
 
-        private bool mouseMoved = false;
         private void ImageDisplay_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _ = Mouse.Capture(null);
             imageMouseDown = false;
-            if (mouseMoved)
+        }
+
+        private bool mouseMoved = false;
+        private void ImageBackgroud_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!mouseMoved)
             {
                 var mousePos = e.GetPosition(ImageBackgroud);
-                if(mousePos.X < ImageBackgroud.ActualWidth / 2)
+                if (mousePos.X < ImageBackgroud.ActualWidth / 2)
                 {
                     MenuLast_Click(ImageBackgroud, new RoutedEventArgs());
                 }
@@ -232,8 +303,8 @@ namespace WallHaven
                 {
                     MenuNext_Click(ImageBackgroud, new RoutedEventArgs());
                 }
+                mouseMoved = false;
             }
-            mouseMoved = false;
         }
 
         private void MenuSaveAs_Click(object sender, RoutedEventArgs e)
@@ -257,31 +328,38 @@ namespace WallHaven
         {
             if (SaveImage(Settings.AppCacheImagePath))
             {
+                MenuWallpaper.IsEnabled = false;
+                (int, int) wpStyle = (-1, -1);
                 if (e.OriginalSource != null && e.OriginalSource is System.Windows.Controls.MenuItem menuStyle && menuStyle.Tag != null)
                 {
-                    (int, int) wpStyle = WallPaperStyle((string)menuStyle.Tag);
+                    wpStyle = WallPaperStyle((string)menuStyle.Tag);
+                }
+                Task.Run(() => {
                     if (wpStyle.Item1 != -1 && wpStyle.Item2 != -1)
                     {
                         Registry.CurrentUser.OpenSubKey("Control Panel", true)?.OpenSubKey("Desktop", true)?.SetValue("TileWallpaper", wpStyle.Item1.ToString());
                         Registry.CurrentUser.OpenSubKey("Control Panel", true)?.OpenSubKey("Desktop", true)?.SetValue("WallpaperStyle", wpStyle.Item2.ToString());
                     }
-                }
-                SystemParametersInfo(20, 0, Settings.AppCacheImagePath, 0x01 | 0x02);
+                    SystemParametersInfo(20, 0, Settings.AppCacheImagePath, 0x01 | 0x02);
+                    Dispatcher.Invoke(new Action(() => {
+                        MenuWallpaper.IsEnabled = true;
+                    }));
+                });
             }
         }
 
         private (int, int) WallPaperStyle(string type)
         {
-            switch (type)
+            return type switch
             {
-                case "1": return (0, 10);
-                case "2": return (0, 2);
-                case "3": return (1, 0);
-                case "4": return (0, 0);
-                case "5": return (0, 22);
-            }
-            return (-1, -1);
-        } 
+                "1" => (0, 10),
+                "2" => (0, 2),
+                "3" => (1, 0),
+                "4" => (0, 0),
+                "5" => (0, 22),
+                _ => (-1, -1),
+            };
+        }
 
         private bool SaveImage(string filePath)
         {
@@ -309,48 +387,60 @@ namespace WallHaven
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            setting.WindowHeight = ActualHeight;
+            setting.WindowWidth = ActualWidth;
+
+            Settings.SaveSetting(setting);
+        }
+
+        private void MenuRatio_Click(object sender, RoutedEventArgs e)
+        {
+            setting.Wide = MenuWide.IsChecked;
+            setting.UltraWide = MenuUltraWide.IsChecked;
+            setting.Portrait = MenuPortrait.IsChecked;
+            setting.Square = MenuSquare.IsChecked;
+        }
+
+        private void MenuInclude_Click(object sender, RoutedEventArgs e)
+        {
             setting.General = MenuGeneral.IsChecked;
             setting.Anime = MenuAnime.IsChecked;
             setting.People = MenuPeople.IsChecked;
             setting.SFW = MenuSFW.IsChecked;
             setting.Sketchy = MenuSketchy.IsChecked;
             setting.NSFW = MenuNSFW.IsChecked;
-            setting.WindowHeight = ActualHeight;
-            setting.WindowWidth = ActualWidth;
-            Settings.SaveSetting(setting);
         }
-
-
 
         private void MenuSorting_Click(object sender, RoutedEventArgs e)
         {
             if (e.OriginalSource == null || ReferenceEquals(sender, e.OriginalSource)) return;
             System.Windows.Controls.MenuItem menu = (System.Windows.Controls.MenuItem)e.OriginalSource;
             if (menu.Tag != null) SetMenuSort(StrToSorting(menu.Tag.ToString()));
+            setting.Sort = GetSorting();
         }
 
         private Sorting StrToSorting(string sortStr)
         {
-            switch (sortStr)
+            return sortStr switch
             {
-                case "1": return Sorting.date_added;
-                case "2": return Sorting.relevance;
-                case "3": return Sorting.random;
-                case "4": return Sorting.views;
-                case "5": return Sorting.favourites;
-                case "6": return Sorting.toplist;
-                default: return Sorting.random;
-            }
+                "1" => Sorting.date_added,
+                "2" => Sorting.relevance,
+                "3" => Sorting.random,
+                "4" => Sorting.views,
+                "5" => Sorting.favourites,
+                "6" => Sorting.toplist,
+                _ => Sorting.random,
+            };
         }
 
         private void SetMenuSort(Sorting sorting)
         {
-            MenuDateAdded.IsChecked = MenuDateAdded.Tag == null ? false : (StrToSorting(MenuDateAdded.Tag.ToString()) == sorting);
-            MenuRelevance.IsChecked = MenuRelevance.Tag == null ? false : (StrToSorting(MenuRelevance.Tag.ToString()) == sorting);
-            MenuRandom.IsChecked = MenuRandom.Tag == null ? false : (StrToSorting(MenuRandom.Tag.ToString()) == sorting);
-            MenuViews.IsChecked = MenuViews.Tag == null ? false : (StrToSorting(MenuViews.Tag.ToString()) == sorting);
-            MenuFavourites.IsChecked = MenuFavourites.Tag == null ? false : (StrToSorting(MenuFavourites.Tag.ToString()) == sorting);
-            MenuToplist.IsChecked = MenuToplist.Tag == null ? false : (StrToSorting(MenuToplist.Tag.ToString()) == sorting);
+            MenuDateAdded.IsChecked = MenuDateAdded.Tag != null && (StrToSorting(MenuDateAdded.Tag.ToString()) == sorting);
+            MenuRelevance.IsChecked = MenuRelevance.Tag != null && (StrToSorting(MenuRelevance.Tag.ToString()) == sorting);
+            MenuRandom.IsChecked = MenuRandom.Tag != null && (StrToSorting(MenuRandom.Tag.ToString()) == sorting);
+            MenuViews.IsChecked = MenuViews.Tag != null && (StrToSorting(MenuViews.Tag.ToString()) == sorting);
+            MenuFavourites.IsChecked = MenuFavourites.Tag != null && (StrToSorting(MenuFavourites.Tag.ToString()) == sorting);
+            MenuToplist.IsChecked = MenuToplist.Tag != null && (StrToSorting(MenuToplist.Tag.ToString()) == sorting);
         }
 
         private Sorting GetSorting()
@@ -362,6 +452,217 @@ namespace WallHaven
             if (MenuFavourites.IsChecked) return Sorting.favourites;
             if (MenuToplist.IsChecked) return Sorting.toplist;
             return Sorting.random;
+        }
+
+        private void SetCtrlButtonAnimation(object sender, double scale)
+        {
+            var animation = new DoubleAnimation()
+            {
+                To = scale,
+                Duration = TimeSpan.FromSeconds(0.5)
+            };
+            BorderCloseAnimation.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            BorderMinAnimation.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            BorderMaxAnimation.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            //if (Equals(BorderClose, sender)) BorderCloseAnimation.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            //else if (Equals(BorderMin, sender)) BorderMinAnimation.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            //else if (Equals(BorderMax, sender)) BorderMaxAnimation.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+        }
+
+        private void Window_MouseEnter(object sender, MouseEventArgs e)
+        {
+            SetCtrlButtonAnimation(sender, 1);
+        }
+
+        private void Window_MouseLeave(object sender, MouseEventArgs e)
+        {
+            SetCtrlButtonAnimation(sender, 1.5);
+        }
+
+        private void BoderSettingCtrlParent_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (isBorderSettingShow) return;
+            SetSettingCtrlButtonAnimation(0);
+        }
+
+        private void BoderSettingCtrlParent_MouseLeave(object sender, MouseEventArgs e)
+        {
+            SetSettingCtrlButtonAnimation(-55);
+        }
+
+        private void SetSettingCtrlButtonAnimation(int y)
+        {
+            var animation = new DoubleAnimation()
+            {
+                To = y,
+                Duration = TimeSpan.FromSeconds(0.5)
+            };
+            BoderSettingCtrl.RenderTransform.BeginAnimation(TranslateTransform.YProperty, animation);
+        }
+        
+        private bool isBorderSettingShow = false;
+        private void ShowBorderSetting(object sender, MouseEventArgs e)
+        {
+            SetBorderSetting();
+            isBorderSettingShow = true;
+            SetSettingBorderAnimation(0);
+        }
+
+        private void HideBorderSetting(object sender, RoutedEventArgs e)
+        {
+            isBorderSettingShow = false;
+            SetSettingBorderAnimation(-380);
+            GetBorderSetting();
+            InitMenuCheck();
+        }
+
+        private void SetSettingBorderAnimation(int y)
+        {
+            var animation = new DoubleAnimation()
+            {
+                To = y,
+                Duration = TimeSpan.FromSeconds(0.5)
+            };
+            BorderSetting.RenderTransform.BeginAnimation(TranslateTransform.YProperty, animation);
+        }
+
+        private void GetBorderSetting()
+        {
+            setting.Sort = GetSettingSorting();
+            setting.APIKey = SettingsAPIToken.Text;
+            setting.General = SettingsIncludeGeneral.IsOn;
+            setting.SFW = SettingsIncludeSFW.IsOn;
+            setting.Anime = SettingsIncludeAnime.IsOn;
+            setting.Sketchy = SettingsIncludeSketchy.IsOn;
+            setting.People = SettingsIncludePeople.IsOn;
+            setting.NSFW = SettingsIncludeNSFW.IsOn;
+            setting.Wide = SettingsRatioWide.IsOn;
+            setting.UltraWide = SettingsRatioUltraWide.IsOn;
+            setting.Portrait = SettingsRatioPortrait.IsOn;
+            setting.Square = SettingsRatioSquare.IsOn;
+        }
+
+        private void SetBorderSetting()
+        {
+            SettingsAPIToken.Text = setting.APIKey;
+            SettingsIncludeGeneral.IsOn = setting.General;
+            SettingsIncludeSFW.IsOn = setting.SFW;
+            SettingsIncludeAnime.IsOn = setting.Anime;
+            SettingsIncludeSketchy.IsOn = setting.Sketchy;
+            SettingsIncludePeople.IsOn = setting.People;
+            SettingsIncludeNSFW.IsOn = setting.NSFW;
+            SettingsRatioWide.IsOn = setting.Wide;
+            SettingsRatioUltraWide.IsOn = setting.UltraWide;
+            SettingsRatioPortrait.IsOn = setting.Portrait;
+            SettingsRatioSquare.IsOn = setting.Square;
+            SetSettingSorting(setting.Sort);
+        }
+
+        private void SetSettingSorting(Sorting sorting)
+        {
+            if((sorting == Sorting.date_added && !SettingsSortingDateAdded.IsOn) || (sorting != Sorting.date_added && SettingsSortingDateAdded.IsOn))
+            {
+                SettingsSortingDateAdded.IsOn = SettingsSortingDateAdded.Tag != null && (StrToSorting(SettingsSortingDateAdded.Tag.ToString()) == sorting);
+            }
+            if ((sorting == Sorting.relevance && !SettingsSortingRelevance.IsOn) || (sorting != Sorting.relevance && SettingsSortingRelevance.IsOn))
+            {
+                SettingsSortingRelevance.IsOn = SettingsSortingRelevance.Tag != null && (StrToSorting(SettingsSortingRelevance.Tag.ToString()) == sorting);
+            }
+            if ((sorting == Sorting.random && !SettingsSortingRandom.IsOn) || (sorting != Sorting.random && SettingsSortingRandom.IsOn))
+            {
+                SettingsSortingRandom.IsOn = SettingsSortingRandom.Tag != null && (StrToSorting(SettingsSortingRandom.Tag.ToString()) == sorting);
+            }
+            if ((sorting == Sorting.views && !SettingsSortingViews.IsOn) || (sorting != Sorting.views && SettingsSortingViews.IsOn))
+            {
+                SettingsSortingViews.IsOn = SettingsSortingViews.Tag != null && (StrToSorting(SettingsSortingViews.Tag.ToString()) == sorting);
+            }
+            if ((sorting == Sorting.favourites && !SettingsSortingFavourites.IsOn) || (sorting != Sorting.favourites && SettingsSortingFavourites.IsOn))
+            {
+                SettingsSortingFavourites.IsOn = SettingsSortingFavourites.Tag != null && (StrToSorting(SettingsSortingFavourites.Tag.ToString()) == sorting);
+            }
+            if ((sorting == Sorting.toplist && !SettingsSortingToplist.IsOn) || (sorting != Sorting.toplist && SettingsSortingToplist.IsOn))
+            {
+                SettingsSortingToplist.IsOn = SettingsSortingToplist.Tag != null && (StrToSorting(SettingsSortingToplist.Tag.ToString()) == sorting);
+            }
+        }
+
+        private Sorting GetSettingSorting()
+        {
+            if (SettingsSortingDateAdded.IsOn) return Sorting.date_added;
+            if (SettingsSortingRelevance.IsOn) return Sorting.relevance;
+            if (SettingsSortingRandom.IsOn) return Sorting.random;
+            if (SettingsSortingViews.IsOn) return Sorting.views;
+            if (SettingsSortingFavourites.IsOn) return Sorting.favourites;
+            if (SettingsSortingToplist.IsOn) return Sorting.toplist;
+            return Sorting.random;
+        }
+
+        private void SettingsSorting_Indeterminate(object sender, RoutedEventArgs e)
+        {
+            ToggleSwitch menu = (ToggleSwitch)sender;
+            if (menu.IsOn)
+            {
+                SetSettingSorting(StrToSorting(menu.Tag.ToString()));
+            }else if(!menu.IsOn)
+            {
+
+            }
+        }
+
+        private void BoderDisplayParent_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (isDisplayShow) return;
+            SetDisplayButtonAnimation(10);
+        }
+
+        private void BoderDisplayParent_MouseLeave(object sender, MouseEventArgs e)
+        {
+            SetDisplayButtonAnimation(-100);
+        }
+
+        private void SetDisplayButtonAnimation(int y)
+        {
+            var animation = new DoubleAnimation()
+            {
+                To = y,
+                Duration = TimeSpan.FromSeconds(0.5)
+            };
+            BoderDisplayCtrl.RenderTransform.BeginAnimation(TranslateTransform.XProperty, animation);
+        }
+
+        private void SetDisplayBorderAnimation(int x)
+        {
+            var animation = new DoubleAnimation()
+            {
+                To = x,
+                Duration = TimeSpan.FromSeconds(0.5)
+            };
+            BorderImages.RenderTransform.BeginAnimation(TranslateTransform.XProperty, animation);
+        }
+
+        private bool isDisplayShow = false;
+        private void ShowImageDisplay(object sender, MouseEventArgs e)
+        {
+            isDisplayShow = true;
+            SetDisplayBorderAnimation(0);
+        }
+
+        private void HideImageDisplay(object sender, RoutedEventArgs e)
+        {
+            isDisplayShow = false;
+            SetDisplayBorderAnimation(-240);
+        }
+
+        private void APIToken_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            string uri = SettingsAPITokenLabel.ToolTip.ToString();
+            if (string.IsNullOrWhiteSpace(uri)) return;
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = uri
+            };
+            System.Diagnostics.Process.Start(psi);
         }
     }
 }
