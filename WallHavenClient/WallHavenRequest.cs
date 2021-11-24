@@ -16,14 +16,14 @@ namespace WallHaven.WallHavenClient
             wallHavenConfig = config;
         }
 
-        public async Task<WallHavenResponse?> GetWallpaper(string wallpaperId, string url = "", string token = "")
+        public async Task<WallHavenResponse> GetWallpaper(string wallpaperId, string url = "", string token = "")
         {
             var responseJson = await GetAsync($"w/{wallpaperId}", url, token);
             var responseObject = !string.IsNullOrWhiteSpace(responseJson) ? JsonConvert.DeserializeObject<WallHavenResponse>(responseJson) : null;
             return responseObject;
         }
 
-        public async Task<WallHavenResponse?> Search(string searchParams, string url = "", string token = "")
+        public async Task<WallHavenResponse> Search(string searchParams, string url = "", string token = "")
         {
             var responseJson = await GetAsync($"search/{searchParams}", url, token);
             var responseObject = !string.IsNullOrWhiteSpace(responseJson) ? JsonConvert.DeserializeObject<WallHavenResponse>(responseJson) : null;
@@ -39,7 +39,7 @@ namespace WallHaven.WallHavenClient
                 try
                 {
                     ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.SystemDefault | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.Replace("https", "http") + searchParams);
                     request.Method = "GET";
                     request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36";
@@ -57,7 +57,7 @@ namespace WallHaven.WallHavenClient
 
                     return retString;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return "";
                 }

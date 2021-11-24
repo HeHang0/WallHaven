@@ -1,23 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace WallHaven
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// App.xaml 的交互逻辑
     /// </summary>
     public partial class App : Application
     {
-        private static Assembly? OnResolveAssembly(object sender, ResolveEventArgs args)
+        private static Assembly OnResolveAssembly(object sender, ResolveEventArgs args)
         {
             Assembly executingAssembly = Assembly.GetExecutingAssembly();
             var executingAssemblyName = executingAssembly.GetName();
             var resName = executingAssemblyName.Name + ".resources";
 
-            AssemblyName assemblyName = new AssemblyName(args.Name); 
+            AssemblyName assemblyName = new AssemblyName(args.Name);
             string path;
             if (resName == assemblyName.Name)
             {
@@ -32,13 +37,14 @@ namespace WallHaven
                 }
             }
 
-            using Stream stream = executingAssembly.GetManifestResourceStream(path);
-            if (stream == null)
-                return null;
-
-            byte[] assemblyRawBytes = new byte[stream.Length];
-            stream.Read(assemblyRawBytes, 0, assemblyRawBytes.Length);
-            return Assembly.Load(assemblyRawBytes);
+            using (Stream stream = executingAssembly.GetManifestResourceStream(path))
+            {
+                if (stream == null)
+                    return null;
+                byte[] assemblyRawBytes = new byte[stream.Length];
+                stream.Read(assemblyRawBytes, 0, assemblyRawBytes.Length);
+                return Assembly.Load(assemblyRawBytes);
+            }
         }
 
         protected override void OnStartup(StartupEventArgs e)

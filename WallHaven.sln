@@ -1,14 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31717.71
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WallHaven", "WallHaven.csproj", "{11999574-2290-47CB-9C76-72D9217AD226}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0E77ECCA-BE73-4925-809C-58022BFA77E6}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WallHaven", "WallHaven.csproj", "{039CD177-1DCC-4BC8-AFD9-068579BEB5FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{11999574-2290-47CB-9C76-72D9217AD226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11999574-2290-47CB-9C76-72D9217AD226}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11999574-2290-47CB-9C76-72D9217AD226}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11999574-2290-47CB-9C76-72D9217AD226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{039CD177-1DCC-4BC8-AFD9-068579BEB5FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{039CD177-1DCC-4BC8-AFD9-068579BEB5FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{039CD177-1DCC-4BC8-AFD9-068579BEB5FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{039CD177-1DCC-4BC8-AFD9-068579BEB5FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7711C147-F464-4595-86D7-A1438671B51D}
+		SolutionGuid = {E55885B3-9119-49B3-8A69-B72D3D6C80E0}
 	EndGlobalSection
 EndGlobal

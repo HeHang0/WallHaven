@@ -2,23 +2,28 @@
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using WallHaven.Theme;
 using WallHaven.WallHavenClient;
 
 namespace WallHaven
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -30,8 +35,8 @@ namespace WallHaven
         private bool imageMouseDown;
         private Point imagePosition;
         private Point currentPosition;
-        private WallHavenRequest? wallHaven;
-        private WallHavenResponse? wallHavenResult;
+        private WallHavenRequest wallHaven;
+        private WallHavenResponse wallHavenResult;
         private readonly Settings setting = Settings.ReadSetting();
 
         public MainWindow()
@@ -44,10 +49,38 @@ namespace WallHaven
             {
                 InitializeComponent();
             }
+            SourceInitialized += MainWindow_SourceInitialized;
+        }
+
+        private void MainWindow_SourceInitialized(object sender, EventArgs e)
+        {
+            IntPtr hwnd;
+            if ((hwnd = new WindowInteropHelper(sender as Window).Handle) == IntPtr.Zero)
+                throw new InvalidOperationException("Could not get window handle.");
+
+            HwndSource.FromHwnd(hwnd).AddHook(WndProc);
+        }
+
+        const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x320;
+        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch (msg)
+            {
+                case WM_DWMCOLORIZATIONCOLORCHANGED:
+                    /* 
+                     * Update gradient brushes with new color information from
+                     * NativeMethods.DwmGetColorizationParams() or the registry.
+                     */
+                    InitModalBackground();
+                    return IntPtr.Zero;
+                default:
+                    return IntPtr.Zero;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
             if (setting.WindowHeight > 0 && setting.WindowWidth > 0)
             {
                 Height = setting.WindowHeight;
@@ -78,6 +111,25 @@ namespace WallHaven
             wallHaven = new WallHavenRequest(config);
             InitMenuCheck();
             RefreshPicList();
+            InitModalBackground();
+        }
+
+        private void InitModalBackground()
+        {
+            WindowsTheme wt = ThemeHelper.GetWindowsTheme();
+            SolidColorBrush scb;
+            if (wt == WindowsTheme.Dark)
+            {
+                scb = new SolidColorBrush(Color.FromArgb(0x66, 0, 0, 0));
+            }
+            else
+            {
+                scb = new SolidColorBrush(Color.FromArgb(0x66, 0xff, 0xff, 0xff));
+            }
+            BorderDisplayCtrlBack.Background = scb;
+            BorderImages.Background = scb;
+            BoderSettingCtrl.Background = scb;
+            BorderSetting.Background = scb;
         }
 
         private void InitMenuCheck()
@@ -115,7 +167,7 @@ namespace WallHaven
             {
                 wallHavenResult = await wallHaven.Search(_searchParams, setting.BaseUrl, setting.APIKey);
                 currentIndex = 0;
-                if(wallHavenResult != null)
+                if (wallHavenResult != null)
                 {
                     ImagesDisplay.ItemsSource = wallHavenResult.Data;
                     ShowImage();
@@ -125,7 +177,7 @@ namespace WallHaven
                     TipsPos.Content = "加载失败";
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 TipsPos.Content = "加载失败";
             }
@@ -159,8 +211,8 @@ namespace WallHaven
 
         private void ImagesDisplay_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Image image = (Image)sender;
-            if(wallHavenResult != null && image.Tag is string)
+            FrameworkElement image = (FrameworkElement)sender;
+            if (wallHavenResult != null && image.Tag is string)
             {
                 int index = wallHavenResult.Data.FindIndex(o => o.Id == image.Tag.ToString());
                 if (index >= 0)
@@ -195,7 +247,7 @@ namespace WallHaven
                 return;
             }
             string imageUrl = wallHavenResult.Data[currentIndex].Path;
-            if(!string.IsNullOrWhiteSpace(imageUrl)) SetImage(imageUrl);
+            if (!string.IsNullOrWhiteSpace(imageUrl)) SetImage(imageUrl);
             MenuLast.IsEnabled = currentIndex > 0;
             MenuNext.IsEnabled = currentIndex < wallHavenResult.Data.Count - 1;
         }
@@ -203,7 +255,8 @@ namespace WallHaven
         private void SetImage(string imageUri)
         {
             BitmapImage imageBitmap = new BitmapImage(new Uri(imageUri));
-            if(imageBitmap.IsDownloading) {
+            if (imageBitmap.IsDownloading)
+            {
                 ChangeLoading(true);
                 MenuSaveAs.IsEnabled = false;
                 MenuWallpaper.IsEnabled = false;
@@ -350,15 +403,15 @@ namespace WallHaven
 
         private (int, int) WallPaperStyle(string type)
         {
-            return type switch
+            switch (type)
             {
-                "1" => (0, 10),
-                "2" => (0, 2),
-                "3" => (1, 0),
-                "4" => (0, 0),
-                "5" => (0, 22),
-                _ => (-1, -1),
-            };
+                case "1": return (0, 10);
+                case "2": return (0, 2);
+                case "3": return (1, 0);
+                case "4": return (0, 0);
+                case "5": return (0, 22);
+                default: return (-1, -1);
+            }
         }
 
         private bool SaveImage(string filePath)
@@ -421,16 +474,16 @@ namespace WallHaven
 
         private Sorting StrToSorting(string sortStr)
         {
-            return sortStr switch
+            switch (sortStr)
             {
-                "1" => Sorting.date_added,
-                "2" => Sorting.relevance,
-                "3" => Sorting.random,
-                "4" => Sorting.views,
-                "5" => Sorting.favourites,
-                "6" => Sorting.toplist,
-                _ => Sorting.random,
-            };
+                case "1": return Sorting.date_added;
+                case "2": return Sorting.relevance;
+                case "3": return Sorting.random;
+                case "4": return Sorting.views;
+                case "5": return Sorting.favourites;
+                case "6": return Sorting.toplist;
+                default: return Sorting.random;
+            }
         }
 
         private void SetMenuSort(Sorting sorting)
@@ -487,7 +540,8 @@ namespace WallHaven
 
         private void BoderSettingCtrlParent_MouseLeave(object sender, MouseEventArgs e)
         {
-            SetSettingCtrlButtonAnimation(-55);
+            Point pt = e.GetPosition(BoderSettingCtrl);
+            if(pt.Y > 0) SetSettingCtrlButtonAnimation(-55);
         }
 
         private void SetSettingCtrlButtonAnimation(int y)
@@ -499,10 +553,11 @@ namespace WallHaven
             };
             BoderSettingCtrl.RenderTransform.BeginAnimation(TranslateTransform.YProperty, animation);
         }
-        
+
         private bool isBorderSettingShow = false;
         private void ShowBorderSetting(object sender, MouseEventArgs e)
         {
+            e.Handled = true;
             SetBorderSetting();
             isBorderSettingShow = true;
             SetSettingBorderAnimation(0);
@@ -560,7 +615,7 @@ namespace WallHaven
 
         private void SetSettingSorting(Sorting sorting)
         {
-            if((sorting == Sorting.date_added && !SettingsSortingDateAdded.IsOn) || (sorting != Sorting.date_added && SettingsSortingDateAdded.IsOn))
+            if ((sorting == Sorting.date_added && !SettingsSortingDateAdded.IsOn) || (sorting != Sorting.date_added && SettingsSortingDateAdded.IsOn))
             {
                 SettingsSortingDateAdded.IsOn = SettingsSortingDateAdded.Tag != null && (StrToSorting(SettingsSortingDateAdded.Tag.ToString()) == sorting);
             }
@@ -603,7 +658,8 @@ namespace WallHaven
             if (menu.IsOn)
             {
                 SetSettingSorting(StrToSorting(menu.Tag.ToString()));
-            }else if(!menu.IsOn)
+            }
+            else if (!menu.IsOn)
             {
 
             }
@@ -617,7 +673,7 @@ namespace WallHaven
 
         private void BoderDisplayParent_MouseLeave(object sender, MouseEventArgs e)
         {
-            SetDisplayButtonAnimation(-100);
+            SetDisplayButtonAnimation(-40);
         }
 
         private void SetDisplayButtonAnimation(int y)
@@ -643,6 +699,7 @@ namespace WallHaven
         private bool isDisplayShow = false;
         private void ShowImageDisplay(object sender, MouseEventArgs e)
         {
+            e.Handled = true;
             isDisplayShow = true;
             SetDisplayBorderAnimation(0);
         }

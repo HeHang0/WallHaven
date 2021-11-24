@@ -124,7 +124,7 @@
                 </ui:SimpleStackPanel>
                 <ui:SimpleStackPanel Orientation="Horizontal" Margin="10,40,10,0" Spacing="24" Height="50" VerticalAlignment="Top" HorizontalAlignment="Center">
                     <Label x:Name="SettingsAPITokenLabel" Content="APIToken" MouseLeftButtonUp="APIToken_MouseLeftButtonUp" ToolTip="https://wallhaven.cc/settings/account" HorizontalAlignment="Center" Width="80" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
-                    <TextBox x:Name="SettingsAPIToken" Height="30" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="270"/>
+                    <TextBox x:Name="SettingsAPIToken" TextWrapping="NoWrap" Height="30" Text="" VerticalAlignment="Center" Width="270"/>
 
                 </ui:SimpleStackPanel>
                 <ui:SimpleStackPanel Orientation="Horizontal" Margin="10,90,10,0" Spacing="24" Height="90" VerticalAlignment="Top" HorizontalAlignment="Center">
@@ -184,9 +184,9 @@
             </Border.RenderTransform>
             <Border x:Name="BoderDisplayCtrl" Width="150" Height="20" Margin="0,0,0,0" VerticalAlignment="Center" >
                 <Border.RenderTransform>
-                    <TranslateTransform X="-25"/>
+                    <TranslateTransform X="-40"/>
                 </Border.RenderTransform>
-                <Border Margin="0,0,0,0" CornerRadius="5" Background="#66000000" >
+                <Border x:Name="BorderDisplayCtrlBack" Margin="0,0,0,0" CornerRadius="5" Background="#66000000" >
                     <Border.RenderTransform>
                         <RotateTransform Angle="-90" CenterX="100" CenterY="0"/>
                     </Border.RenderTransform>
@@ -195,24 +195,48 @@
                 </Border>
             </Border>
         </Border>
-        <Border x:Name="BorderImages" Background="#66000000" CornerRadius="8" Margin="10,40,0,20" HorizontalAlignment="Left" Width="230"
+        <Border x:Name="BorderImages" Background="#66000000" CornerRadius="8" Margin="10,40,0,20" HorizontalAlignment="Left" Width="220"
                 MouseLeave="HideImageDisplay" MouseEnter="ShowImageDisplay">
             <Border.RenderTransform>
                 <TranslateTransform X="-240"/>
             </Border.RenderTransform>
             <ListBox x:Name="ImagesDisplay" Margin="0">
+                <ListBox.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                    <!--选中项失去焦点后的颜色-->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
+                    <Style TargetType="ListBox">
+                        <Setter Property="ItemContainerStyle">
+                            <Setter.Value>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="ListBoxItem.Background" Value="Transparent"/>
+                                    <Setter Property="ListBoxItem.BorderBrush" Value="Transparent"/>
+                                    <Setter Property="ListBoxItem.BorderThickness" Value="0"/>
+                                    <Setter Property="ListBoxItem.Margin" Value="0"/>
+                                    <Setter Property="ListBoxItem.Padding" Value="0"/>
+                                </Style>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.Resources>
                 <ListBox.Template>
                     <ControlTemplate TargetType="{x:Type ListBox}">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto"  HorizontalScrollBarVisibility="Disabled">
-                            <WrapPanel Margin="0" Orientation="Horizontal" IsItemsHost="True">
+                        <ScrollViewer Margin="5" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <WrapPanel Margin="0" Orientation="Horizontal" IsItemsHost="True" Background="Transparent">
+                                
                             </WrapPanel>
                         </ScrollViewer>
                     </ControlTemplate>
                 </ListBox.Template>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="0" Width="90" Height="90" CornerRadius="5">
-                            <Image MouseLeftButtonUp="ImagesDisplay_MouseLeftButtonUp"  Source="{Binding Path=ThumbsUrl}" Tag="{Binding Path=Id}" Stretch="Fill"/>
+                        <Border Width="100" Height="100" CornerRadius="5" Style="{DynamicResource BorderStyle2}">
+                            <Border.Resources>                                <Style x:Key="BorderStyle2" TargetType="{x:Type Border}">                                    <Style.Triggers>                                        <Trigger Property="IsMouseOver" Value="True">                                            <Setter Property="Background" Value="#88808080"></Setter>                                        </Trigger>                                        <Trigger Property="IsMouseOver" Value="False">                                            <Setter Property="Background" Value="Transparent"></Setter>                                        </Trigger>                                    </Style.Triggers>                                </Style>                            </Border.Resources>
+                            <Border Margin="5" Width="90" Height="90" CornerRadius="5" MouseLeftButtonUp="ImagesDisplay_MouseLeftButtonUp" Tag="{Binding Path=Id}">
+                                <Border.Background>
+                                    <ImageBrush ImageSource="{Binding Path=ThumbsUrl}" Stretch="Fill"/>
+                                </Border.Background>
+                            </Border>
                         </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

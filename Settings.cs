@@ -46,7 +46,7 @@ namespace WallHaven
                 try
                 {
                     string text = File.ReadAllText(AppSettingPath);
-                    Settings? result = JsonConvert.DeserializeObject<Settings>(text);
+                    Settings result = JsonConvert.DeserializeObject<Settings>(text);
                     if (result != null) settings = result;
                 }
                 catch (Exception)
