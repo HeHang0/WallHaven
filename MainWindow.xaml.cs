@@ -261,6 +261,7 @@ namespace WallHaven
                 MenuSaveAs.IsEnabled = false;
                 MenuWallpaper.IsEnabled = false;
                 MenuCopy.IsEnabled = false;
+                imageBitmap.DownloadProgress += ImageBitmap_DownloadProgress;
                 imageBitmap.DownloadCompleted += ImageBitmap_DownloadCompleted;
             }
             ImageDisplay.Source = imageBitmap;
@@ -273,11 +274,18 @@ namespace WallHaven
             TipsPos.Visibility = show ? Visibility.Visible : Visibility.Hidden;
         }
 
+        private void ImageBitmap_DownloadProgress(object sender, DownloadProgressEventArgs e)
+        {
+            int progress = e.Progress;
+            Dispatcher.Invoke(() => { TipsPos.Content = $"加载中...{e.Progress}"; });
+        }
+
         private void ImageBitmap_DownloadCompleted(object sender, EventArgs e)
         {
             ChangeLoading(false);
             if (sender == null || !(sender is BitmapSource)) return;
             ((BitmapSource)sender).DownloadCompleted -= ImageBitmap_DownloadCompleted;
+            ((BitmapSource)sender).DownloadProgress += ImageBitmap_DownloadProgress;
             MenuSaveAs.IsEnabled = true;
             MenuWallpaper.IsEnabled = true;
             MenuCopy.IsEnabled = true;
