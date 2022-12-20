@@ -3,6 +3,7 @@ using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WallHaven.Theme;
 using WallHaven.WallHavenClient;
+using Windows.Globalization;
 
 namespace WallHaven
 {
@@ -238,20 +240,23 @@ namespace WallHaven
             }
         }
 
+        private string currentName = "";
         private void ShowImage()
         {
             if (wallHavenResult == null || currentIndex >= wallHavenResult.Data.Count - 1 || currentIndex < 0)
             {
                 ChangeLoading(true);
-                TipsPos.Content = "加载失败";
+                TipsPos.Content = languageRD != null ? languageRD["loadingFail"] : "";
                 return;
             }
             string imageUrl = wallHavenResult.Data[currentIndex].Path;
+            currentName = wallHavenResult.Data[currentIndex].Tags?.FirstOrDefault()?.Name ?? "";
             if (!string.IsNullOrWhiteSpace(imageUrl)) SetImage(imageUrl);
             MenuLast.IsEnabled = currentIndex > 0;
             MenuNext.IsEnabled = currentIndex < wallHavenResult.Data.Count - 1;
         }
 
+        ResourceDictionary languageRD;
         private void SetImage(string imageUri)
         {
             BitmapImage imageBitmap = new BitmapImage(new Uri(imageUri));
@@ -270,14 +275,26 @@ namespace WallHaven
 
         private void ChangeLoading(bool show)
         {
-            TipsPos.Content = show ? "加载中..." : "";
+            ResourceManager currentResource = new ResourceManager("Language.Properties.Resources", typeof(Properties.Resources).Assembly);
+            var languages = Windows.System.UserProfile.GlobalizationPreferences.Languages.ToList();
+            string language = "en-us";
+            if (languages != null && languages.Count > 0)
+            {
+                if (languages[0].Contains("zh") || languages[0].Contains("cn")) language = "zh-cn";
+            }
+            if(languageRD == null)
+            {
+                languageRD = Application.Current.Resources.MergedDictionaries.FirstOrDefault(m => m.Source != null && m.Source.OriginalString.Equals($@"Resources\{language}.xaml"));
+            }
+            TipsPos.Content = show && languageRD != null ? $"{languageRD["loading"]}..." : "";
             TipsPos.Visibility = show ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void ImageBitmap_DownloadProgress(object sender, DownloadProgressEventArgs e)
         {
+            Console.WriteLine();
             int progress = e.Progress;
-            Dispatcher.Invoke(() => { TipsPos.Content = $"加载中...{e.Progress}"; });
+            Dispatcher.Invoke(() => { TipsPos.Content = languageRD != null ? $"{languageRD["loading"]}...[{e.Progress}]" : ""; });
         }
 
         private void ImageBitmap_DownloadCompleted(object sender, EventArgs e)
@@ -374,7 +391,8 @@ namespace WallHaven
             {
                 Filter = "图片 (*.jpg)|*.jpg",
                 FilterIndex = 1,
-                RestoreDirectory = true
+                RestoreDirectory = true,
+                FileName = currentName
             };
             //sfd.FileName = Title;
             if (sfd.ShowDialog() == true)
@@ -490,6 +508,7 @@ namespace WallHaven
                 case "4": return Sorting.views;
                 case "5": return Sorting.favourites;
                 case "6": return Sorting.toplist;
+                case "7": return Sorting.hot;
                 default: return Sorting.random;
             }
         }
@@ -502,6 +521,7 @@ namespace WallHaven
             MenuViews.IsChecked = MenuViews.Tag != null && (StrToSorting(MenuViews.Tag.ToString()) == sorting);
             MenuFavourites.IsChecked = MenuFavourites.Tag != null && (StrToSorting(MenuFavourites.Tag.ToString()) == sorting);
             MenuToplist.IsChecked = MenuToplist.Tag != null && (StrToSorting(MenuToplist.Tag.ToString()) == sorting);
+            MenuHot.IsChecked = MenuHot.Tag != null && (StrToSorting(MenuHot.Tag.ToString()) == sorting);
         }
 
         private Sorting GetSorting()
@@ -512,6 +532,7 @@ namespace WallHaven
             if (MenuViews.IsChecked) return Sorting.views;
             if (MenuFavourites.IsChecked) return Sorting.favourites;
             if (MenuToplist.IsChecked) return Sorting.toplist;
+            if (MenuHot.IsChecked) return Sorting.hot;
             return Sorting.random;
         }
 

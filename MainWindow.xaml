@@ -20,50 +20,51 @@
           MouseWheel="ImageBackgroud_MouseWheel" MouseLeftButtonUp="ImageBackgroud_MouseLeftButtonUp">
         <Grid.ContextMenu>
             <ContextMenu>
-                <MenuItem Name="MenuLast" Header="Last" IsEnabled="False" Click="MenuLast_Click"/>
-                <MenuItem Name="MenuNext" Header="Next" IsEnabled="False" Click="MenuNext_Click"/>
-                <MenuItem Name="MenuRefresh" Header="Refresh" Click="MenuRefresh_Click"/>
+                <MenuItem Name="MenuLast" Header="{DynamicResource last}" IsEnabled="False" Click="MenuLast_Click"/>
+                <MenuItem Name="MenuNext" Header="{DynamicResource next}" IsEnabled="False" Click="MenuNext_Click"/>
+                <MenuItem Name="MenuRefresh" Header="{DynamicResource refresh}" Click="MenuRefresh_Click"/>
                 <Separator></Separator>
-                <MenuItem Name="MenuCopy" Header="Copy" IsEnabled="False" Click="MenuCopy_Click"/>
+                <MenuItem Name="MenuCopy" Header="{DynamicResource copy}" IsEnabled="False" Click="MenuCopy_Click"/>
                 <Separator></Separator>
-                <MenuItem Name="MenuSaveAs" Header="SaveAs" IsEnabled="False" Click="MenuSaveAs_Click"/>
-                <MenuItem Name="MenuWallpaper" Header="Wallpaper" IsEnabled="False" Click="MenuWallpaper_Click">
-                    <MenuItem Name="MenuWallpaperFill" Header="Fill" Tag="1"/>
-                    <MenuItem Name="MenuWallpaperStretch" Header="Stretch" Tag="2"/>
-                    <MenuItem Name="MenuWallpaperTile" Header="Tile" Tag="3"/>
-                    <MenuItem Name="MenuWallpaperCenter" Header="Center" Tag="4"/>
-                    <MenuItem Name="MenuWallpaperFit" Header="Fit" Tag="5"/>
+                <MenuItem Name="MenuSaveAs" Header="{DynamicResource saveAs}" IsEnabled="False" Click="MenuSaveAs_Click"/>
+                <MenuItem Name="MenuWallpaper" Header="{DynamicResource wallpaper}" IsEnabled="False" Click="MenuWallpaper_Click">
+                    <MenuItem Name="MenuWallpaperFill" Header="{DynamicResource fill}" Tag="1"/>
+                    <MenuItem Name="MenuWallpaperStretch" Header="{DynamicResource stretch}" Tag="2"/>
+                    <MenuItem Name="MenuWallpaperTile" Header="{DynamicResource tile}" Tag="3"/>
+                    <MenuItem Name="MenuWallpaperCenter" Header="{DynamicResource center}" Tag="4"/>
+                    <MenuItem Name="MenuWallpaperFit" Header="{DynamicResource fit}" Tag="5"/>
                 </MenuItem>
                 <Separator></Separator>
-                <MenuItem Name="MenuInclude" Header="Include" Click="MenuInclude_Click">
-                    <MenuItem Name="MenuGeneral" IsCheckable="True" IsChecked="True" Header="General"/>
-                    <MenuItem Name="MenuAnime"  IsCheckable="True" IsChecked="True" Header="Anime"/>
-                    <MenuItem Name="MenuPeople"  IsCheckable="True" IsChecked="True" Header="People"/>
+                <MenuItem Name="MenuInclude" Header="{DynamicResource include}" Click="MenuInclude_Click">
+                    <MenuItem Name="MenuGeneral" IsCheckable="True" IsChecked="True" Header="{DynamicResource general}"/>
+                    <MenuItem Name="MenuAnime"  IsCheckable="True" IsChecked="True" Header="{DynamicResource anime}"/>
+                    <MenuItem Name="MenuPeople"  IsCheckable="True" IsChecked="True" Header="{DynamicResource people}"/>
                     <Separator></Separator>
                     <MenuItem Name="MenuSFW" IsCheckable="True" IsChecked="True" Header="SFW"/>
                     <MenuItem Name="MenuSketchy" IsCheckable="True" IsChecked="True" Header="Sketchy"/>
                     <MenuItem Name="MenuNSFW" IsCheckable="True" IsChecked="True" Header="NSFW"/>
                 </MenuItem>
-                <MenuItem Name="MenuSorting" Header="Sorting" Click="MenuSorting_Click">
-                    <ui:RadioMenuItem Name="MenuDateAdded" IsCheckable="True" IsChecked="False" Header="DateAdded" Tag="1"/>
-                    <ui:RadioMenuItem Name="MenuRelevance"  IsCheckable="True" IsChecked="False" Header="Relevance" Tag="2"/>
-                    <ui:RadioMenuItem Name="MenuRandom"  IsCheckable="True" IsChecked="False" Header="Random" Tag="3"/>
-                    <ui:RadioMenuItem Name="MenuViews" IsCheckable="True" IsChecked="False" Header="Views" Tag="4"/>
-                    <ui:RadioMenuItem Name="MenuFavourites" IsCheckable="True" IsChecked="False" Header="Favourites" Tag="5"/>
-                    <ui:RadioMenuItem Name="MenuToplist" IsCheckable="True" IsChecked="False" Header="Toplist" Tag="6"/>
+                <MenuItem Name="MenuSorting" Header="{DynamicResource sorting}" Click="MenuSorting_Click">
+                    <ui:RadioMenuItem Name="MenuDateAdded" IsCheckable="True" IsChecked="False" Header="{DynamicResource dateAdded}" Tag="1"/>
+                    <ui:RadioMenuItem Name="MenuRelevance"  IsCheckable="True" IsChecked="False" Header="{DynamicResource relevance}" Tag="2"/>
+                    <ui:RadioMenuItem Name="MenuRandom"  IsCheckable="True" IsChecked="False" Header="{DynamicResource random}" Tag="3"/>
+                    <ui:RadioMenuItem Name="MenuViews" IsCheckable="True" IsChecked="False" Header="{DynamicResource views}" Tag="4"/>
+                    <ui:RadioMenuItem Name="MenuFavourites" IsCheckable="True" IsChecked="False" Header="{DynamicResource favourites}" Tag="5"/>
+					<ui:RadioMenuItem Name="MenuToplist" IsCheckable="True" IsChecked="False" Header="{DynamicResource toplist}" Tag="6"/>
+					<ui:RadioMenuItem Name="MenuHot" IsCheckable="True" IsChecked="False" Header="{DynamicResource hot}" Tag="6"/>
                 </MenuItem>
-                <MenuItem Name="MenuRatio" Header="Ratio" Click="MenuRatio_Click">
-                    <MenuItem Name="MenuWide" IsCheckable="True" IsChecked="False" Header="Wide"/>
-                    <MenuItem Name="MenuUltraWide"  IsCheckable="True" IsChecked="False" Header="UltraWide"/>
-                    <MenuItem Name="MenuPortrait"  IsCheckable="True" IsChecked="False" Header="Portrait"/>
-                    <MenuItem Name="MenuSquare" IsCheckable="True" IsChecked="False" Header="Square"/>
+                <MenuItem Name="MenuRatio" Header="{DynamicResource ratio}" Click="MenuRatio_Click">
+                    <MenuItem Name="MenuWide" IsCheckable="True" IsChecked="False" Header="{DynamicResource wide}"/>
+                    <MenuItem Name="MenuUltraWide"  IsCheckable="True" IsChecked="False" Header="{DynamicResource ultraWide}"/>
+                    <MenuItem Name="MenuPortrait"  IsCheckable="True" IsChecked="False" Header="{DynamicResource portrait}"/>
+                    <MenuItem Name="MenuSquare" IsCheckable="True" IsChecked="False" Header="{DynamicResource square}"/>
                 </MenuItem>
             </ContextMenu>
         </Grid.ContextMenu>
         <Image x:Name="BackGround" Source="Resources/BlueGradients.bmp" Stretch="Fill"/>
         <Image x:Name="ImageDisplay" MouseLeftButtonDown="ImageDisplay_MouseLeftButtonDown"  MouseMove="ImageDisplay_MouseMove"
                    MouseLeftButtonUp="ImageDisplay_MouseLeftButtonUp"/>
-        <Label x:Name="TipsPos" Height="30" Content="哈哈哈" Foreground="DeepPink"  VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+        <Label x:Name="TipsPos" Height="30" Content="" Foreground="DeepPink"  VerticalAlignment="Bottom" HorizontalContentAlignment="Center"/>
 
         <!--<Border x:Name="ImageBackgroud" Background="Black" MouseWheel="ImageBackgroud_MouseWheel"  MouseMove="ImageBackgroud_MouseMove"  MouseUp="ImageBackgroud_MouseUp">
             <Image x:Name="ImageDisplay" Source="{Binding}">
@@ -120,7 +121,7 @@
                     </ui:AppBarToggleButton.Resources>
                 </ui:AppBarToggleButton>
                 <ui:SimpleStackPanel Orientation="Horizontal" Margin="10,10,10,0" Spacing="24" Height="30" VerticalAlignment="Top" HorizontalAlignment="Center">
-                    <Label Content="Settings" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Right" Cursor="Arrow"/>
+                    <Label Content="{DynamicResource settings}" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Right" Cursor="Arrow"/>
                 </ui:SimpleStackPanel>
                 <ui:SimpleStackPanel Orientation="Horizontal" Margin="10,40,10,0" Spacing="24" Height="50" VerticalAlignment="Top" HorizontalAlignment="Center">
                     <Label x:Name="SettingsAPITokenLabel" Content="APIToken" MouseLeftButtonUp="APIToken_MouseLeftButtonUp" ToolTip="https://wallhaven.cc/settings/account" HorizontalAlignment="Center" Width="80" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
@@ -128,49 +129,49 @@
 
                 </ui:SimpleStackPanel>
                 <ui:SimpleStackPanel Orientation="Horizontal" Margin="10,90,10,0" Spacing="24" Height="90" VerticalAlignment="Top" HorizontalAlignment="Center">
-                    <Label Content="Include" HorizontalAlignment="Center" Width="80" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,5,0,0" Cursor="Arrow"/>
+                    <Label Content="{DynamicResource include}" HorizontalAlignment="Center" Width="80" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,5,0,0" Cursor="Arrow"/>
                     <ui:SimpleStackPanel Width="270">
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="24" Height="30" VerticalAlignment="Top">
-                            <ui:ToggleSwitch x:Name="SettingsIncludeGeneral" OnContent="General" OffContent="General" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsIncludeGeneral" OnContent="{DynamicResource general}" OffContent="{DynamicResource general}" Width="125"></ui:ToggleSwitch>
                             <ui:ToggleSwitch x:Name="SettingsIncludeSFW" OnContent="SFW" OffContent="SFW" Width="125"></ui:ToggleSwitch>
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="24" Height="30" VerticalAlignment="Top">
-                            <ui:ToggleSwitch x:Name="SettingsIncludeAnime" OnContent="Anime" OffContent="Anime" Width="125"></ui:ToggleSwitch>
-                            <ui:ToggleSwitch x:Name="SettingsIncludeSketchy" OnContent="Sketchy" OffContent="Sketchy" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsIncludeAnime" OnContent="{DynamicResource anime}" OffContent="{DynamicResource anime}" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsIncludeSketchy" OnContent="{DynamicResource sketchy}" OffContent="{DynamicResource sketchy}" Width="125"></ui:ToggleSwitch>
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="24" Height="30" VerticalAlignment="Top">
-                            <ui:ToggleSwitch x:Name="SettingsIncludePeople" OnContent="People" OffContent="People" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsIncludePeople" OnContent="{DynamicResource people}" OffContent="{DynamicResource people}" Width="125"></ui:ToggleSwitch>
                             <ui:ToggleSwitch x:Name="SettingsIncludeNSFW" OnContent="NSFW" OffContent="NSFW" Width="125"></ui:ToggleSwitch>
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
                 <ui:SimpleStackPanel Orientation="Horizontal" Margin="10,180,10,0" Spacing="24" Height="90" VerticalAlignment="Top" HorizontalAlignment="Center">
-                    <Label Content="Sorting" HorizontalAlignment="Center" Width="80" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,5,0,0" Cursor="Arrow"/>
+                    <Label Content="{DynamicResource sorting}" HorizontalAlignment="Center" Width="80" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,5,0,0" Cursor="Arrow"/>
                     <ui:SimpleStackPanel Width="270">
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="24" Height="30" VerticalAlignment="Top">
-                            <ui:ToggleSwitch x:Name="SettingsSortingDateAdded" Toggled="SettingsSorting_Indeterminate" Tag="1" OnContent="DateAdded" OffContent="DateAdded" Width="125"></ui:ToggleSwitch>
-                            <ui:ToggleSwitch x:Name="SettingsSortingRelevance" Toggled="SettingsSorting_Indeterminate" Tag="2" OnContent="Relevance" OffContent="Relevance" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsSortingDateAdded" Toggled="SettingsSorting_Indeterminate" Tag="1" OnContent="{DynamicResource dateAdded}" OffContent="{DynamicResource dateAdded}" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsSortingRelevance" Toggled="SettingsSorting_Indeterminate" Tag="2" OnContent="{DynamicResource relevance}" OffContent="{DynamicResource relevance}" Width="125"></ui:ToggleSwitch>
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="24" Height="30" VerticalAlignment="Top">
-                            <ui:ToggleSwitch x:Name="SettingsSortingRandom" Toggled="SettingsSorting_Indeterminate" Tag="3" OnContent="Random" OffContent="Random" Width="125"></ui:ToggleSwitch>
-                            <ui:ToggleSwitch x:Name="SettingsSortingViews" Toggled="SettingsSorting_Indeterminate" Tag="4" OnContent="Views" OffContent="Views" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsSortingRandom" Toggled="SettingsSorting_Indeterminate" Tag="3" OnContent="{DynamicResource random}" OffContent="{DynamicResource random}" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsSortingViews" Toggled="SettingsSorting_Indeterminate" Tag="4" OnContent="{DynamicResource views}" OffContent="{DynamicResource views}" Width="125"></ui:ToggleSwitch>
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="24" Height="30" VerticalAlignment="Top">
-                            <ui:ToggleSwitch x:Name="SettingsSortingFavourites" Toggled="SettingsSorting_Indeterminate" Tag="5" OnContent="Favourites" OffContent="Favourites" Width="125"></ui:ToggleSwitch>
-                            <ui:ToggleSwitch x:Name="SettingsSortingToplist" Toggled="SettingsSorting_Indeterminate" Tag="6" OnContent="Toplist" OffContent="Toplist" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsSortingFavourites" Toggled="SettingsSorting_Indeterminate" Tag="5" OnContent="{DynamicResource favourites}" OffContent="{DynamicResource favourites}" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsSortingToplist" Toggled="SettingsSorting_Indeterminate" Tag="6" OnContent="{DynamicResource toplist}" OffContent="{DynamicResource toplist}" Width="125"></ui:ToggleSwitch>
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
                 <ui:SimpleStackPanel Orientation="Horizontal" Margin="10,270,10,0" Spacing="24" Height="90" VerticalAlignment="Top" HorizontalAlignment="Center">
-                    <Label Content="Ratio" HorizontalAlignment="Center" Width="80" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,5,0,0" Cursor="Arrow"/>
+                    <Label Content="{DynamicResource ratio}" HorizontalAlignment="Center" Width="80" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,5,0,0" Cursor="Arrow"/>
                     <ui:SimpleStackPanel Width="270">
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="24" Height="30" VerticalAlignment="Top">
-                            <ui:ToggleSwitch x:Name="SettingsRatioWide" OnContent="Wide" OffContent="Wide" Width="125"></ui:ToggleSwitch>
-                            <ui:ToggleSwitch x:Name="SettingsRatioUltraWide" OnContent="UltraWide" OffContent="UltraWide" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsRatioWide" OnContent="{DynamicResource wide}" OffContent="{DynamicResource wide}" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsRatioUltraWide" OnContent="{DynamicResource ultraWide}" OffContent="{DynamicResource ultraWide}" Width="125"></ui:ToggleSwitch>
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="24" Height="30" VerticalAlignment="Top">
-                            <ui:ToggleSwitch x:Name="SettingsRatioPortrait" OnContent="Portrait" OffContent="Portrait" Width="125"></ui:ToggleSwitch>
-                            <ui:ToggleSwitch x:Name="SettingsRatioSquare" OnContent="Square" OffContent="Square" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsRatioPortrait" OnContent="{DynamicResource portrait}" OffContent="{DynamicResource portrait}" Width="125"></ui:ToggleSwitch>
+                            <ui:ToggleSwitch x:Name="SettingsRatioSquare" OnContent="{DynamicResource square}" OffContent="{DynamicResource square}" Width="125"></ui:ToggleSwitch>
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>

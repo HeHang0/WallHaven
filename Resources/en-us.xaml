@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:s="clr-namespace:System;assembly=mscorlib"
+                     xmlns:local="clr-namespace:WallHaven">
+	<s:String x:Key="settings">Settings</s:String>
+	<s:String x:Key="last">Last</s:String>
+	<s:String x:Key="next">Next</s:String>
+	<s:String x:Key="refresh">Refresh</s:String>
+	<s:String x:Key="copy">Copy</s:String>
+	<s:String x:Key="saveAs">SaveAs</s:String>
+	<s:String x:Key="wallpaper">Wallpaper</s:String>
+	<s:String x:Key="fill">Fill</s:String>
+	<s:String x:Key="stretch">Stretch</s:String>
+	<s:String x:Key="tile">Tile</s:String>
+	<s:String x:Key="center">Center</s:String>
+	<s:String x:Key="fit">Fit</s:String>
+	<s:String x:Key="include">Include</s:String>
+	<s:String x:Key="general">General</s:String>
+	<s:String x:Key="anime">Anime</s:String>
+	<s:String x:Key="people">People</s:String>
+	<s:String x:Key="sketchy">Sketchy</s:String>
+	<s:String x:Key="sorting">Sorting</s:String>
+	<s:String x:Key="dateAdded">DateAdded</s:String>
+	<s:String x:Key="relevance">Relevance</s:String>
+	<s:String x:Key="random">Random</s:String>
+	<s:String x:Key="views">Views</s:String>
+	<s:String x:Key="favourites">Favourites</s:String>
+	<s:String x:Key="toplist">Toplist</s:String>
+	<s:String x:Key="hot">Hot</s:String>
+	<s:String x:Key="ratio">Ratio</s:String>
+	<s:String x:Key="wide">Wide</s:String>
+	<s:String x:Key="ultraWide">UltraWide</s:String>
+	<s:String x:Key="portrait">Portrait</s:String>
+	<s:String x:Key="square">Square</s:String>
+	<s:String x:Key="loading">Loading</s:String>
+	<s:String x:Key="loadingFail">Failed to load</s:String>
+</ResourceDictionary>

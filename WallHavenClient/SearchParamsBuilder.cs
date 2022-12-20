@@ -10,7 +10,8 @@ namespace WallHaven.WallHavenClient
         random = 3,
         views = 4,
         favourites = 5,
-        toplist = 6
+        toplist = 6,
+        hot = 7
     }
 
     public enum OrderBy
