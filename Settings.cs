@@ -16,11 +16,19 @@ namespace WallHaven
             get
             {
                 string roming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-                string appDataPath = Path.Combine(roming, string.IsNullOrWhiteSpace(appName) ? "WallHaven" : appName);
+                string appDataPath = Path.Combine(roming, AppName);
                 string appSettingPath = Path.Combine(appDataPath, "settings.json");
                 if (!Directory.Exists(appDataPath)) Directory.CreateDirectory(appDataPath);
                 return appSettingPath;
+            }
+        }
+
+        public static string AppName
+        {
+            get
+            {
+                string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+                return string.IsNullOrWhiteSpace(appName) ? "WallHaven" : appName;
             }
         }
 

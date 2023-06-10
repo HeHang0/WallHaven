@@ -5,22 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WallHaven.Theme;
 using WallHaven.WallHavenClient;
-using Windows.Globalization;
 
 namespace WallHaven
 {
@@ -288,13 +281,13 @@ namespace WallHaven
             }
             TipsPos.Content = show && languageRD != null ? $"{languageRD["loading"]}..." : "";
             TipsPos.Visibility = show ? Visibility.Visible : Visibility.Hidden;
+            TipsRing.IsActive = show;
         }
 
         private void ImageBitmap_DownloadProgress(object sender, DownloadProgressEventArgs e)
         {
-            Console.WriteLine();
             int progress = e.Progress;
-            Dispatcher.Invoke(() => { TipsPos.Content = languageRD != null ? $"{languageRD["loading"]}...[{e.Progress}]" : ""; });
+            Dispatcher.Invoke(() => { TipsPos.Content = $"{e.Progress}"; });
         }
 
         private void ImageBitmap_DownloadCompleted(object sender, EventArgs e)
